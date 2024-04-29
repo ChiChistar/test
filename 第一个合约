@@ -1,0 +1,45 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.7;  //>=0.8.7 <0.9.0 等等写法
+
+contract SimpleStorage { //boolean,uint,int,address,bytes
+ //    string favoritenumber = "five";
+ //    bytes favoritenumberBytes="cat";//max bytes32
+    uint256 favoriteNumber;   //默认=0
+    people public person=people({favoriteNumber:2,name:"bob"});
+
+    struct people{   //类似class
+        uint256 favoriteNumber;
+        string name;
+    }
+
+    //mapping映射
+    mapping (string=>uint256) public nameToFavoritenumber;//数据类型,从什么搜什么
+
+
+    //uint256[] public favoriteNumberList;
+    people[] public peoples;   //结构体数组?
+
+    function store(uint256 _favoriteNumber) public {   //创建一个名为store的函数
+    favoriteNumber=_favoriteNumber; 
+    retrieve();  //retrieve函数本身是view类型,不消耗汽油费,但被store调用就会收取retrieve的汽油费
+
+}
+    
+    function retrieve() public view returns (uint256){  //view函数不允许修改在\任何状态 
+        return  favoriteNumber;
+    }  //该函数的功能和加public是一样的,都是为了能够看到相关的值
+    
+    function addperson(string memory _name,uint256 _favoriteNumber) public{   //memory要加在数组,结构或映射?? 后面 (memory临时可改,calldata临时不可改,storage永久可改)
+        people memory newperson = people(_favoriteNumber,  _name);//或者({favoriteNumber:_favoriteNumber,name:_name});
+        //peoples.push(people(_favoriteNumber,_name));
+        peoples.push(newperson);
+        nameToFavoritenumber[_name]=_favoriteNumber;//调用mapping映射
+
+        //###上面几行可以简写为:peoples.push(people(_favoriteNumber,_name));
+    }
+
+
+     }   
+     //0xd9145CCE52D386f254917e481eB44e9943F39138   //智能合约部署的地址
+     //view 和 pure 不消耗汽油费
+     
